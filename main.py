@@ -13,7 +13,7 @@ class Ball:
         self.h = 20
         self.w = 20
 
-        self.image = pg.Surface((20, 20))
+        self.image = pg.Surface((self.w, self.h))
         self.image.fill(YELLOW)
 
     @property
@@ -35,6 +35,27 @@ class Ball:
         self.Cy += self.vy
 
 
+class Raquet:
+    def __init__(self):
+        self.vx = 0
+        self.vy = 5
+        self.w = 25
+        self.h = 100
+        self.Cx = 30
+        self.Cy = 300
+
+        self.image = pg.Surface((self.w, self.h))
+        self.image.fill((255, 255, 255))
+
+    @property
+    def posx(self):
+        return self.Cx - self.w // 2
+        
+    @property
+    def posy(self):
+        return self.Cy - self.h // 2
+
+
 
 class Game:
     def __init__(self):
@@ -42,7 +63,7 @@ class Game:
         self.pantalla.fill(BACKGROUND)
         self.fondo = pg.image.load("./resources/images/fondo.jpg")
         self.ball = Ball()
-
+        self.playerOne = Raquet()
         pg.display.set_caption("Pong")
 
     def main_loop(self):
@@ -53,8 +74,22 @@ class Game:
                 if event.type == QUIT:
                     game_over = True
 
+                if event.type == KEYDOWN:
+                    if event.key == K_w:
+                        self.playerOne.Cy -= self.playerOne.vy
+
+                    if event.key == K_z:
+                        self.playerOne.Cy += self.playerOne.vy
+
+            key_pressed = pg.key.get_pressed()
+            if key_pressed[K_w]:
+                self.playerOne.Cy -= self.playerOne.vy
+            if key_pressed[K_z]:
+                self.playerOne.Cy += self.playerOne.vy
+
             self.pantalla.blit(self.fondo, (0, 0))
             self.pantalla.blit(self.ball.image, (self.ball.posx, self.ball.posy))
+            self.pantalla.blit(self.playerOne.image, (self.playerOne.posx, self.playerOne.posy))
 
             self.ball.move(800, 600)
 
