@@ -12,19 +12,35 @@ class Ball:
         self.Cy = 300
         self.h = 20
         self.w = 20
-        self.posx = self.Cx - self.w // 2
-        self.posy = self.Cy - self.h // 2
-
 
         self.image = pg.Surface((20, 20))
         self.image.fill(YELLOW)
+
+    @property
+    def posx(self):
+        return self.Cx - self.w // 2
+        
+    @property
+    def posy(self):
+        return self.Cy - self.h // 2
+
+    def move(self, limSupX, limSupY):
+        if self.Cx >= limSupX or self.Cx <=0:
+            self.vx *= -1
+
+        if self.Cy >= limSupY or self.Cy <=0:
+            self.vy *= -1
+                
+        self.Cx += self.vx
+        self.Cy += self.vy
+
+
 
 class Game:
     def __init__(self):
         self.pantalla = pg.display.set_mode((800, 600))
         self.pantalla.fill(BACKGROUND)
-        fondo = pg.image.load("./resources/images/fondo.jpg")
-        self.pantalla.blit(fondo, (0, 0))
+        self.fondo = pg.image.load("./resources/images/fondo.jpg")
         self.ball = Ball()
 
         pg.display.set_caption("Pong")
@@ -37,7 +53,11 @@ class Game:
                 if event.type == QUIT:
                     game_over = True
 
+            self.pantalla.blit(self.fondo, (0, 0))
             self.pantalla.blit(self.ball.image, (self.ball.posx, self.ball.posy))
+
+            self.ball.move(800, 600)
+
             pg.display.flip()
 
     def quit(self):
