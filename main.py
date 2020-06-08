@@ -1,34 +1,32 @@
-import pygame
-from pygame.locals import * 
+import pygame as pg
+from pygame.locals import *
 import sys
 
-pygame.init()
+BACKGROUND = (0,240,0)
 
-pantalla =  pygame.display.set_mode((600, 400))
-pygame.display.set_caption("Hola Mundo")
+class Game:
+    def __init__(self):
+        self.pantalla = pg.display.set_mode((800, 600))
+        self.pantalla.fill(BACKGROUND)
+        pg.display.set_caption("Pong")
 
-rojo = 0
-direccion = 1
+    def main_loop(self):
+        game_over = False
 
-juego_activo = True
+        while not game_over:
+            for event in pg.event.get():
+                if event.type == QUIT:
+                    game_over = True
 
-while juego_activo:
-    for event in pygame.event.get():
-        if event.type == QUIT:
-            juego_activo = False
-    if rojo >= 255:
-        direccion = -1
+            pg.display.flip()
 
-    if rojo <= 0:
-        direccion = 1
-
-    rojo += direccion
-
-    pantalla.fill((rojo, 0, 0))
-
-    pygame.display.flip()
-    pygame.time.delay(10)
+    def quit(self):
+        pg.quit()
+        sys.exit()
 
 
-pygame.quit()
-sys.exit()
+if __name__ == "__main__":
+    pg.init()
+    game = Game()
+    game.main_loop()
+    game.quit()
