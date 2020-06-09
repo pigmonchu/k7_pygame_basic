@@ -2,7 +2,7 @@ import pygame as pg
 from pygame.locals import *
 import sys
 
-BACKGROUND = (0,240,0)
+BACKGROUND = (50,50,50)
 YELLOW = (255, 255, 0)
 class Ball: 
     def __init__(self):
@@ -38,10 +38,10 @@ class Ball:
 class Raquet:
     def __init__(self):
         self.vx = 0
-        self.vy = 5
+        self.vy = 0
         self.w = 25
         self.h = 100
-        self.Cx = 30
+        self.Cx = 770
         self.Cy = 300
 
         self.image = pg.Surface((self.w, self.h))
@@ -54,6 +54,19 @@ class Raquet:
     @property
     def posy(self):
         return self.Cy - self.h // 2
+
+    def move(self, limSupX, limSupY):
+        self.Cx += self.vx
+        self.Cy += self.vy
+
+        if self.Cy < self.h //2:
+            self.Cy = self.h // 2
+
+        if self.Cy > limSupY - self.h // 2:
+            self.Cy = limSupY - self.h // 2
+
+        print('velocidad ({}, {})'.format(self.vx, self.vy))
+        
 
 
 
@@ -75,23 +88,27 @@ class Game:
                     game_over = True
 
                 if event.type == KEYDOWN:
-                    if event.key == K_w:
-                        self.playerOne.Cy -= self.playerOne.vy
+                    if event.key == K_UP:
+                        self.playerOne.vy = -5
 
-                    if event.key == K_z:
-                        self.playerOne.Cy += self.playerOne.vy
+
+                    if event.key == K_DOWN:
+                        self.playerOne.vy = 5
 
             key_pressed = pg.key.get_pressed()
-            if key_pressed[K_w]:
-                self.playerOne.Cy -= self.playerOne.vy
-            if key_pressed[K_z]:
-                self.playerOne.Cy += self.playerOne.vy
+            if key_pressed[K_UP]:
+                self.playerOne.vy = - 5
+            elif key_pressed[K_DOWN]:
+                self.playerOne.vy = 5
+            else:
+                self.playerOne.vy = 0
 
             self.pantalla.blit(self.fondo, (0, 0))
             self.pantalla.blit(self.ball.image, (self.ball.posx, self.ball.posy))
             self.pantalla.blit(self.playerOne.image, (self.playerOne.posx, self.playerOne.posy))
 
             self.ball.move(800, 600)
+            self.playerOne.move(800, 600)
 
             pg.display.flip()
 
