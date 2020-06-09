@@ -3,10 +3,10 @@ from pygame.locals import *
 import sys, random
 
 BACKGROUND = (50,50,50)
-YELLOW = (255, 255, 0)
+YELLOW = (255, 255, 0)  
 WHITE = (255, 255, 255)
 
-WIN_GAME_SCORE = 10
+WIN_GAME_SCORE = 3
 
 class Ball: 
     def __init__(self):
@@ -16,6 +16,8 @@ class Ball:
 
         self.image = pg.Surface((self.w, self.h))
         self.image.fill(YELLOW)
+        self.ping = pg.mixer.Sound('./resources/sounds/ping.wav')
+        self.lost_point = pg.mixer.Sound('./resources/sounds/lost-point.wav')
 
     @property
     def posx(self):
@@ -29,9 +31,11 @@ class Ball:
         if self.Cx >= limSupX or self.Cx <=0:
             self.vx = 0
             self.vy = 0
+            self.lost_point.play()
 
         if self.Cy >= limSupY or self.Cy <=0:
             self.vy *= -1
+            self.ping.play()
                 
         self.Cx += self.vx
         self.Cy += self.vy
@@ -44,6 +48,7 @@ class Ball:
             self.vx *= -1
             self.Cx += self.vx
             self.Cy += self.vy
+            self.ping.play()
 
     def reset(self):
         self.vx = random.choice([-7, -5, 5, 7])
@@ -92,7 +97,7 @@ class Game:
         self.playerOne = Raquet(30)
         self.playerTwo = Raquet(770)
 
-        self.font = pg.font.Font('./resources/fonts/PressStart2P-Regular.ttf', 36)
+        self.font = pg.font.Font('./resources/fonts/font.ttf', 40)
 
         self.marcadorOne = self.font.render("0", True, WHITE)
         self.marcadorTwo = self.font.render("0", True, WHITE)
@@ -148,10 +153,12 @@ class Game:
             if self.ball.vx == 0 and self.ball.vy == 0:
                 if self.ball.Cx >=800:
                     self.scoreOne += 1
+                    self.marcadorOne = self.font.render(str(self.scoreOne), True, WHITE)
                 if self.ball.Cx <= 0:
                     self.scoreTwo += 1
+                    self.marcadorTwo = self.font.render(str(self.scoreTwo), True, WHITE)
 
-                if self.scoreOne == 10 or self.scoreTwo == 10:
+                if self.scoreOne == WIN_GAME_SCORE or self.scoreTwo == WIN_GAME_SCORE:
                     game_over = True
 
                 self.ball.reset()
@@ -162,7 +169,7 @@ class Game:
             self.pantalla.blit(self.ball.image, (self.ball.posx, self.ball.posy))
             self.pantalla.blit(self.playerOne.image, (self.playerOne.posx, self.playerOne.posy))
             self.pantalla.blit(self.playerTwo.image, (self.playerTwo.posx, self.playerTwo.posy))
-            self.pantalla.blit(self.marcadorOne, (10, 10))
+            self.pantalla.blit(self.marcadorOne, (30, 10))
             self.pantalla.blit(self.marcadorTwo, (740, 10))
 
             pg.display.flip()
