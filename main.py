@@ -116,7 +116,7 @@ class Game:
     def handlenEvent(self):
         for event in pg.event.get():
             if event.type == QUIT:
-                return True
+                self.quit()
             '''
             if event.type == KEYDOWN:
                 if event.key == K_UP:
@@ -187,6 +187,9 @@ class Game:
         inicio_partida = False
         while not inicio_partida:
             for event in pg.event.get():
+                if event.type == QUIT:
+                    self.quit()
+
                 if event.type == KEYDOWN:
                     if event.key == K_SPACE:
                         inicio_partida = True
