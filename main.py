@@ -97,10 +97,16 @@ class Game:
         self.playerOne = Raquet(30)
         self.playerTwo = Raquet(770)
 
+        self.status = 'Partida'
+
         self.font = pg.font.Font('./resources/fonts/font.ttf', 40)
+        self.fontGrande = pg.font.Font('./resources/fonts/font.ttf', 60)
 
         self.marcadorOne = self.font.render("0", True, WHITE)
         self.marcadorTwo = self.font.render("0", True, WHITE)
+
+        self.text_game_over = self.fontGrande.render("GAME OVER", True, YELLOW)
+        self.text_insert_coin = self.font.render('<SPACE> - Inicio partida', True, WHITE)
 
         self.scoreOne = 0
         self.scoreTwo = 0
@@ -137,11 +143,14 @@ class Game:
         
         return False
 
-    def main_loop(self):
+    def bucle_partida(self):
         game_over = False
+        self.scoreOne = 0
+        self.scoreTwo = 0
+        self.marcadorOne = self.font.render(str(self.scoreOne), True, WHITE)
+        self.marcadorTwo = self.font.render(str(self.scoreOne), True, WHITE)
 
         while not game_over:
-
             game_over = self.handlenEvent()
 
             self.ball.move(800, 600)
@@ -163,8 +172,6 @@ class Game:
 
                 self.ball.reset()
 
-
-
             self.pantalla.blit(self.fondo, (0, 0))
             self.pantalla.blit(self.ball.image, (self.ball.posx, self.ball.posy))
             self.pantalla.blit(self.playerOne.image, (self.playerOne.posx, self.playerOne.posy))
@@ -173,6 +180,34 @@ class Game:
             self.pantalla.blit(self.marcadorTwo, (740, 10))
 
             pg.display.flip()
+
+        self.status = 'Inicio'
+
+    def bucle_inicio(self):
+        inicio_partida = False
+        while not inicio_partida:
+            for event in pg.event.get():
+                if event.type == KEYDOWN:
+                    if event.key == K_SPACE:
+                        inicio_partida = True
+
+            self.pantalla.fill((0,0, 255))
+            self.pantalla.blit(self.text_game_over, (100, 100))
+            self.pantalla.blit(self.text_insert_coin, (100, 200))     
+
+            pg.display.flip()       
+
+        self.status = 'Partida'
+
+
+    def main_loop(self):
+
+        while True:
+            if self.status == 'Partida':
+                self.bucle_partida()
+            else:
+                self.bucle_inicio()
+
 
     def quit(self):
         pg.quit()
