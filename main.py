@@ -34,6 +34,14 @@ class Ball:
         self.Cx += self.vx
         self.Cy += self.vy
 
+    def comprobarChoque(self, something):
+        dx = abs(self.Cx - something.Cx)
+        dy = abs(self.Cy - something.Cy)
+
+        if dx < (self.w + something.w)//2 and dy < (self.h +something.h) // 2:
+            self.vx *= -1
+            self.Cx += self.vx
+            self.Cy += self.vy
 
 class Raquet:
     def __init__(self, Cx):
@@ -65,7 +73,6 @@ class Raquet:
         if self.Cy > limSupY - self.h // 2:
             self.Cy = limSupY - self.h // 2
 
-        print('velocidad ({}, {})'.format(self.vx, self.vy))
         
 
 class Game:
@@ -118,6 +125,8 @@ class Game:
             self.ball.move(800, 600)
             self.playerOne.move(800, 600)
             self.playerTwo.move(800, 600)
+            self.ball.comprobarChoque(self.playerOne)
+            self.ball.comprobarChoque(self.playerTwo)
 
             pg.display.flip()
 
