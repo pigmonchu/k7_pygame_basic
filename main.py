@@ -40,19 +40,27 @@ class Ball:
         self.Cx += self.vx
         self.Cy += self.vy
 
+    def __expulsaMe(self, something):
+        signo = abs(self.vx)/self.vx
+        dx = signo * (something.Cx - self.Cx) + something.w//2 + self.w//2
+        dt = abs(dx/self.vx)
+        dy = int(round(self.vy * dt, 0))
+        self.Cx += (dx * signo)
+        self.Cy += dy
+
     def comprobarChoque(self, something):
         dx = abs(self.Cx - something.Cx)
         dy = abs(self.Cy - something.Cy)
 
         if dx < (self.w + something.w)//2 and dy < (self.h +something.h) // 2:
-            self.vx *= -1
-            self.Cx += self.vx
-            self.Cy += self.vy
+            self.vx *= -1.1
+            self.vy *= 1.1
             self.ping.play()
+            self.__expulsaMe(something)
 
     def reset(self):
-        self.vx = random.choice([-7, -5, 5, 7])
-        self.vy = random.choice([-7, -5, 5, 7]) 
+        self.vx = random.choice([-5, -3, 3, 5])
+        self.vy = random.choice([-5, -3, 3, 5]) 
         self.Cx = 400
         self.Cy = 300
 
@@ -117,27 +125,29 @@ class Game:
         for event in pg.event.get():
             if event.type == QUIT:
                 self.quit()
-            '''
             if event.type == KEYDOWN:
                 if event.key == K_UP:
                     self.playerOne.vy = -5
-
-
                 if event.key == K_DOWN:
                     self.playerOne.vy = 5
-            '''
+
+                if event.key == K_w:
+                    self.playerOne.vy = -5
+                if event.key == K_z:
+                    self.playerOne.vy = 5
+
         key_pressed = pg.key.get_pressed()
         if key_pressed[K_UP]:
-            self.playerTwo.vy = - 5
+            self.playerTwo.vy -= 1 
         elif key_pressed[K_DOWN]:
-            self.playerTwo.vy = 5
+            self.playerTwo.vy += 1
         else:
             self.playerTwo.vy = 0
 
         if key_pressed[K_w]:
-            self.playerOne.vy = - 5
+            self.playerOne.vy -= 1
         elif key_pressed[K_z]:
-            self.playerOne.vy = 5
+            self.playerOne.vy += 1
         else:
             self.playerOne.vy = 0
         
