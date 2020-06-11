@@ -8,16 +8,18 @@ WHITE = (255, 255, 255)
 
 WIN_GAME_SCORE = 3
 
-class Ball: 
-    def __init__(self):
-        self.reset()
-        self.h = 20
-        self.w = 20
+class Movil:
+    __vx = 0
+    __vy = 0
+    def __init__(self, x=0, y=0, w=10, h=10):
+        self.Cx = x
+        self.Cy = y
+        self.w = w
+        self.h = h
+        
 
         self.image = pg.Surface((self.w, self.h))
-        self.image.fill(YELLOW)
-        self.ping = pg.mixer.Sound('./resources/sounds/ping.wav')
-        self.lost_point = pg.mixer.Sound('./resources/sounds/lost-point.wav')
+        self.color = WHITE
 
     @property
     def posx(self):
@@ -27,6 +29,50 @@ class Ball:
     def posy(self):
         return self.Cy - self.h // 2
 
+    @property
+    def color(self):
+        return self.__color
+
+    @color.setter
+    def color(self, value):
+        self.__color = value
+        self.image.fill(self.__color)
+
+    @property
+    def vx(self):
+        return self.__vx
+
+    @vx.setter
+    def vx(self, value):
+        self.__vx = value
+
+    @property
+    def vy(self):
+        return self.__vy
+
+    @vy.setter
+    def vy(self, value):
+        self.__vy = value
+
+    def move(self):
+        self.Cx += self.__vx
+        self.Cy += self.__vy
+
+    def comprobarChoque(self, something):
+        dx = abs(self.Cx - something.Cx)
+        dy = abs(self.Cy - something.Cy)
+
+        return dx < (self.w + something.w)//2 and dy < (self.h +something.h) // 2
+
+class Ball(Movil): 
+    def __init__(self):
+        super().__init__(400, 300, 20, 20)
+        self.reset()
+        self.color = YELLOW
+        self.ping = pg.mixer.Sound('./resources/sounds/ping.wav')
+        self.lost_point = pg.mixer.Sound('./resources/sounds/lost-point.wav')
+
+ 
     def move(self, limSupX, limSupY):
         if self.Cx >= limSupX or self.Cx <=0:
             self.vx = 0
@@ -36,9 +82,9 @@ class Ball:
         if self.Cy >= limSupY or self.Cy <=0:
             self.vy *= -1
             self.ping.play()
-                
-        self.Cx += self.vx
-        self.Cy += self.vy
+
+        super().move()
+
 
     def __expulsaMe(self, something):
         signo = abs(self.vx)/self.vx
@@ -49,12 +95,9 @@ class Ball:
         self.Cy += dy
 
     def comprobarChoque(self, something):
-        dx = abs(self.Cx - something.Cx)
-        dy = abs(self.Cy - something.Cy)
-
-        if dx < (self.w + something.w)//2 and dy < (self.h +something.h) // 2:
-            self.vx *= -1.1
-            self.vy *= 1.1
+        if super().comprobarChoque(something):
+            self.vx *= -random.uniform(0.9, 1.2)
+            self.vy *= random.uniform(0.9, 1.2)
             self.ping.play()
             self.__expulsaMe(something)
 
@@ -64,36 +107,19 @@ class Ball:
         self.Cx = 400
         self.Cy = 300
 
-class Raquet:
+class Raquet(Movil):
     def __init__(self, Cx):
-        self.vx = 0
-        self.vy = 0
-        self.w = 25
-        self.h = 100
-        self.Cx = Cx
-        self.Cy = 300
+        super().__init__(Cx, 200, 25, 100)
 
-        self.image = pg.Surface((self.w, self.h))
-        self.image.fill((255, 255, 255))
-
-    @property
-    def posx(self):
-        return self.Cx - self.w // 2
-        
-    @property
-    def posy(self):
-        return self.Cy - self.h // 2
 
     def move(self, limSupX, limSupY):
-        self.Cx += self.vx
-        self.Cy += self.vy
+        super().move()
 
         if self.Cy < self.h //2:
             self.Cy = self.h // 2
 
         if self.Cy > limSupY - self.h // 2:
             self.Cy = limSupY - self.h // 2
-
         
 
 class Game:
