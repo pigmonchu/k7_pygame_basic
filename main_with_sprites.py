@@ -10,18 +10,15 @@ class Game:
     def __init__(self):
         self.pantalla = pg.display.set_mode((800, 600))
         self.pantalla.fill(BACKGROUND)
-        self.fondo = pg.image.load("./resources/images/fondo.jpg")
+        self.fondo = pg.image.load("./resources/images/futbol.png")
         self.ball = Ball()
-        self.playerOne = Raquet(30)
-        self.playerTwo = Raquet(770)
+        self.playerOne = Raquet(30,1)
+        self.playerTwo = Raquet(770,2)
 
         self.status = 'Partida'
 
         self.font = pg.font.Font('./resources/fonts/font.ttf', 40)
         self.fontGrande = pg.font.Font('./resources/fonts/font.ttf', 60)
-
-        self.marcadorOne = self.font.render("0", True, WHITE)
-        self.marcadorTwo = self.font.render("0", True, WHITE)
 
         self.text_game_over = self.fontGrande.render("GAME OVER", True, YELLOW)
         self.text_insert_coin = self.font.render('<SPACE> - Inicio partida', True, WHITE)
@@ -67,8 +64,8 @@ class Game:
         game_over = False
         self.scoreOne = 0
         self.scoreTwo = 0
-        self.marcadorOne = self.font.render(str(self.scoreOne), True, WHITE)
-        self.marcadorTwo = self.font.render(str(self.scoreOne), True, WHITE)
+        self.marcadorOne = self.font.render(str(self.scoreOne), True, RED)
+        self.marcadorTwo = self.font.render(str(self.scoreOne), True, RED)
 
         while not game_over:
             game_over = self.handlenEvent()
@@ -76,16 +73,17 @@ class Game:
             self.ball.update(800, 600)
             self.playerOne.update(800, 600)
             self.playerTwo.update(800, 600)
-            self.ball.comprobarChoque(self.playerOne)
-            self.ball.comprobarChoque(self.playerTwo)
-
+            if self.ball.comprobarChoque(self.playerOne):
+                self.playerOne.impacto = True
+            if self.ball.comprobarChoque(self.playerTwo):
+                self.playerTwo.impacto = True
             if self.ball.vx == 0 and self.ball.vy == 0:
                 if self.ball.rect.centerx >=800:
                     self.scoreOne += 1
-                    self.marcadorOne = self.font.render(str(self.scoreOne), True, WHITE)
+                    self.marcadorOne = self.font.render(str(self.scoreOne), True, RED)
                 if self.ball.rect.centerx <= 0:
                     self.scoreTwo += 1
-                    self.marcadorTwo = self.font.render(str(self.scoreTwo), True, WHITE)
+                    self.marcadorTwo = self.font.render(str(self.scoreTwo), True, RED)
 
                 if self.scoreOne == WIN_GAME_SCORE or self.scoreTwo == WIN_GAME_SCORE:
                     game_over = True
