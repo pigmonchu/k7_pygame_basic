@@ -1,7 +1,7 @@
 import pygame as pg
 from pygame.locals import *
 import sys, random
-from entities import *
+from sprites import *
 
 BACKGROUND = (50,50,50)
 YELLOW = (255, 255, 0)  
@@ -80,17 +80,17 @@ class Game:
         while not game_over:
             game_over = self.handlenEvent()
 
-            self.ball.move(800, 600)
-            self.playerOne.move(600)
-            self.playerTwo.move(600)
+            self.ball.update(800, 600)
+            self.playerOne.update(600)
+            self.playerTwo.update(600)
             self.ball.comprobarChoque(self.playerOne)
             self.ball.comprobarChoque(self.playerTwo)
 
             if self.ball.vx == 0 and self.ball.vy == 0:
-                if self.ball.Cx >=800:
+                if self.ball.rect.centerx >=800:
                     self.scoreOne += 1
                     self.marcadorOne = self.font.render(str(self.scoreOne), True, WHITE)
-                if self.ball.Cx <= 0:
+                if self.ball.rect.centerx <= 0:
                     self.scoreTwo += 1
                     self.marcadorTwo = self.font.render(str(self.scoreTwo), True, WHITE)
 
@@ -100,9 +100,9 @@ class Game:
                 self.ball.reset()
 
             self.pantalla.blit(self.fondo, (0, 0))
-            self.pantalla.blit(self.ball.image, (self.ball.posx, self.ball.posy))
-            self.pantalla.blit(self.playerOne.image, (self.playerOne.posx, self.playerOne.posy))
-            self.pantalla.blit(self.playerTwo.image, (self.playerTwo.posx, self.playerTwo.posy))
+            self.pantalla.blit(self.ball.image, (self.ball.rect.x, self.ball.rect.y))
+            self.pantalla.blit(self.playerOne.image, (self.playerOne.rect.x, self.playerOne.rect.y))
+            self.pantalla.blit(self.playerTwo.image, (self.playerTwo.rect.x, self.playerTwo.rect.y))
             self.pantalla.blit(self.marcadorOne, (30, 10))
             self.pantalla.blit(self.marcadorTwo, (740, 10))
 
