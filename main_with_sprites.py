@@ -16,8 +16,16 @@ class Game:
         self.pantalla.fill(BACKGROUND)
         self.fondo = pg.image.load("./resources/images/fondo.jpg")
         self.ball = Ball()
+
         self.playerOne = Raquet(30)
         self.playerTwo = Raquet(770)
+        self.playersGroup = pg.sprite.Group()
+        self.playersGroup.add(self.playerOne)
+        self.playersGroup.add(self.playerTwo)
+
+        self.allSprites = pg.sprite.Group()
+        self.allSprites.add(self.ball)
+        self.allSprites.add(self.playersGroup)
 
         self.status = 'Partida'
 
@@ -80,11 +88,9 @@ class Game:
         while not game_over:
             game_over = self.handlenEvent()
 
-            self.ball.update(800, 600)
-            self.playerOne.update(600)
-            self.playerTwo.update(600)
-            self.ball.comprobarChoque(self.playerOne)
-            self.ball.comprobarChoque(self.playerTwo)
+            self.allSprites.update(800, 600)
+
+            self.ball.comprobarChoque(self.playersGroup)
 
             if self.ball.vx == 0 and self.ball.vy == 0:
                 if self.ball.rect.centerx >=800:
@@ -100,9 +106,7 @@ class Game:
                 self.ball.reset()
 
             self.pantalla.blit(self.fondo, (0, 0))
-            self.pantalla.blit(self.ball.image, (self.ball.rect.x, self.ball.rect.y))
-            self.pantalla.blit(self.playerOne.image, (self.playerOne.rect.x, self.playerOne.rect.y))
-            self.pantalla.blit(self.playerTwo.image, (self.playerTwo.rect.x, self.playerTwo.rect.y))
+            self.allSprites.draw(self.pantalla)
             self.pantalla.blit(self.marcadorOne, (30, 10))
             self.pantalla.blit(self.marcadorTwo, (740, 10))
 
