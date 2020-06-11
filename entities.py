@@ -107,7 +107,7 @@ class Ball(Movil):
 
 class Raquet(Movil):
     def __init__(self, Cx):
-        super().__init__(Cx, 200, 25, 100)
+        super().__init__(Cx, 300, 25, 100)
 
 
     def move(self, limSupX, limSupY):
