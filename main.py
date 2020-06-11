@@ -1,100 +1,10 @@
 import pygame as pg
 from pygame.locals import *
+from entities import *
 import sys, random
-
-BACKGROUND = (50,50,50)
-YELLOW = (255, 255, 0)  
-WHITE = (255, 255, 255)
 
 WIN_GAME_SCORE = 3
 
-class Ball: 
-    def __init__(self):
-        self.reset()
-        self.h = 20
-        self.w = 20
-
-        self.image = pg.Surface((self.w, self.h))
-        self.image.fill(YELLOW)
-        self.ping = pg.mixer.Sound('./resources/sounds/ping.wav')
-        self.lost_point = pg.mixer.Sound('./resources/sounds/lost-point.wav')
-
-    @property
-    def posx(self):
-        return self.Cx - self.w // 2
-        
-    @property
-    def posy(self):
-        return self.Cy - self.h // 2
-
-    def move(self, limSupX, limSupY):
-        if self.Cx >= limSupX or self.Cx <=0:
-            self.vx = 0
-            self.vy = 0
-            self.lost_point.play()
-
-        if self.Cy >= limSupY or self.Cy <=0:
-            self.vy *= -1
-            self.ping.play()
-                
-        self.Cx += self.vx
-        self.Cy += self.vy
-
-    def __expulsaMe(self, something):
-        signo = abs(self.vx)/self.vx
-        dx = signo * (something.Cx - self.Cx) + something.w//2 + self.w//2
-        dt = abs(dx/self.vx)
-        dy = int(round(self.vy * dt, 0))
-        self.Cx += (dx * signo)
-        self.Cy += dy
-
-    def comprobarChoque(self, something):
-        dx = abs(self.Cx - something.Cx)
-        dy = abs(self.Cy - something.Cy)
-
-        if dx < (self.w + something.w)//2 and dy < (self.h +something.h) // 2:
-            self.vx *= -1.1
-            self.vy *= 1.1
-            self.ping.play()
-            self.__expulsaMe(something)
-
-    def reset(self):
-        self.vx = random.choice([-5, -3, 3, 5])
-        self.vy = random.choice([-5, -3, 3, 5]) 
-        self.Cx = 400
-        self.Cy = 300
-
-class Raquet:
-    def __init__(self, Cx):
-        self.vx = 0
-        self.vy = 0
-        self.w = 25
-        self.h = 100
-        self.Cx = Cx
-        self.Cy = 300
-
-        self.image = pg.Surface((self.w, self.h))
-        self.image.fill((255, 255, 255))
-
-    @property
-    def posx(self):
-        return self.Cx - self.w // 2
-        
-    @property
-    def posy(self):
-        return self.Cy - self.h // 2
-
-    def move(self, limSupX, limSupY):
-        self.Cx += self.vx
-        self.Cy += self.vy
-
-        if self.Cy < self.h //2:
-            self.Cy = self.h // 2
-
-        if self.Cy > limSupY - self.h // 2:
-            self.Cy = limSupY - self.h // 2
-
-        
 
 class Game:
     def __init__(self):
